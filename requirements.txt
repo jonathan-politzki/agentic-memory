@@ -1,0 +1,5 @@
+supermemory
+openai
+python-dotenv
+requests
+uuid 
