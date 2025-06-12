@@ -33,6 +33,22 @@ Our core design principles will be:
 We are now ready to pivot from testing to building.
 
 ---
+
+## Addendum: The Final Decisive Test
+
+Based on feedback from another user suggesting that `containerTags` were effective for data partitioning, we designed one final, definitive test to validate this claim: [`use_cases/tag_partitioning_test.py`](use_cases/tag_partitioning_test.py).
+
+This test created two unique organization tags and added a memory to each. It then performed a search for data while filtering for only **one** of those tags.
+
+### Result: Catastrophic Failure
+
+The test failed completely. The API call, despite being filtered for a specific `org:` tag, returned a flood of completely irrelevant data from the global memory pool and failed to retrieve the specific memory it was queried for.
+
+**This result definitively proves that `containerTags` do not provide reliable context isolation.** It validates our previous findings and allows us to conclude with maximum confidence that `supermemory` is not a suitable platform for our needs.
+
+The investigation phase is now closed.
+
+---
 *The original, more optimistic findings are archived below for historical reference.*
 
 ### Original Findings (Archived)
