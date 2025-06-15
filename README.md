@@ -1,33 +1,19 @@
-# Agentic Memory: Your Memory
+# Jean Memory Agent Integration
 
-This repository chronicles the journey of building a robust, cross-application memory layer for AI agents. The goal is to create a service that allows AI systems (like those in Slack, Linear, or development environments) to share a consistent, persistent memory, enabling more powerful and context-aware agentic workflows.
+This repository documents the correct method for integrating AI agents with the Jean Memory service.
 
-## The Problem
+## Connection Method
 
-Modern AI agents are powerful but forgetful. A conversation in one application is completely isolated from another. To build truly helpful agents that can automate complex tasks (e.g., "create a bug report from that Slack conversation and assign it to the right engineer"), we need a reliable memory layer that is:
-- **Persistent:** Remembers information across sessions.
-- **Contextually Isolated:** Can separate memories from different users, projects, or applications (e.g., `user_A`'s data should never leak into `user_B`'s queries).
-- **Semantically Searchable:** Can retrieve information based on natural language and intent, not just keywords.
+The official and only supported method for connecting a compatible agent (e.g., the Claude desktop app) to your Jean Memory is by using the `npx install-mcp` command. This command configures your local agent environment to securely communicate with the Jean Memory server.
 
-## Phase 1: Benchmarking `supermemory`
+**Note:** Direct connections from custom scripts (e.g., via Python's `requests` or `mcp` libraries) are not supported and will be rejected by the server.
 
-Our initial phase involved a deep, hands-on investigation of a commercial memory-as-a-service platform, [`supermemory`](https://supermemory.ai/). We developed a series of [industrial use-case simulations](use_cases/) to test its capabilities against our requirements.
+### Your Personalized Install Command
 
-### Key Findings & Conclusion
+Run the following command in your terminal. It is unique to your user account and will install and configure the necessary client.
 
-Our detailed findings are documented in [`supermemory_learnings.md`](supermemory_learnings.md). The executive summary is:
+```bash
+npx install-mcp https://api.jeanmemory.com/mcp/claude/sse/66d3d5d1-fc48-44a7-bbc0-1efa2e164fad --client claude
+```
 
-**`supermemory` is not a suitable backend for building reliable, multi-context agentic systems.**
-
-While the service has a powerful semantic search engine, our tests revealed critical flaws in its API and SDK that prevent robust data isolation. We found that its filtering mechanisms act as weak "boosts" rather than strict partitions, leading to severe context pollution and data leakage between different users and sessions in our tests.
-
-## Phase 2: Building `your-memory`
-
-Armed with the hard-won insights from our research, we are now moving to Phase 2: **designing and building our own superior memory API.**
-
-Our core design principles, directly addressing the failures we identified, are:
-1.  **First-Class Contexts:** The concept of a "context" or "session" will be a primary, required parameter for all API calls.
-2.  **Predictable & Strict Filtering:** Data will be strictly partitioned. A query in one context will **never** see data from another.
-3.  **Developer-First Design:** The API and SDK will be consistent, well-documented, and intuitive from day one.
-
-This repository will track the development of this new service.
+Once the command completes, your compatible agent will be connected to Jean Memory and will have access to all of its memory tools.

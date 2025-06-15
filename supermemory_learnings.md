@@ -33,22 +33,6 @@ Our core design principles will be:
 We are now ready to pivot from testing to building.
 
 ---
-
-## Addendum: The Final Decisive Test
-
-Based on feedback from another user suggesting that `containerTags` were effective for data partitioning, we designed one final, definitive test to validate this claim: [`use_cases/tag_partitioning_test.py`](use_cases/tag_partitioning_test.py).
-
-This test created two unique organization tags and added a memory to each. It then performed a search for data while filtering for only **one** of those tags.
-
-### Result: Catastrophic Failure
-
-The test failed completely. The API call, despite being filtered for a specific `org:` tag, returned a flood of completely irrelevant data from the global memory pool and failed to retrieve the specific memory it was queried for.
-
-**This result definitively proves that `containerTags` do not provide reliable context isolation.** It validates our previous findings and allows us to conclude with maximum confidence that `supermemory` is not a suitable platform for our needs.
-
-The investigation phase is now closed.
-
----
 *The original, more optimistic findings are archived below for historical reference.*
 
 ### Original Findings (Archived)
@@ -97,4 +81,18 @@ This was the most critical finding. Relying on the web-based API documentation a
 
 `supermemory` is a viable and powerful tool for the agentic use cases we are targeting. It solved the core challenges of partitioned memory and semantic, cross-application context retrieval that we set out to test.
 
-Our primary contribution in this phase has been **de-risking the technology and documenting its actual usage patterns.** We have effectively written the missing "how-to" guide for their Python SDK, which will be invaluable as we move into the next phase: designing and building our own API. We now have a clear benchmark to beat. 
+Our primary contribution in this phase has been **de-risking the technology and documenting its actual usage patterns.** We have effectively written the missing "how-to" guide for their Python SDK, which will be invaluable as we move into the next phase: designing and building our own API. We now have a clear benchmark to beat.
+
+## Final Update
+
+After a server-side fix was deployed to address the context isolation bug, we re-ran our definitive test script, [`examples/search_context_test.py`](examples/search_context_test.py).
+
+The test **continued to fail** in the exact same manner: a search performed within a specific client context (`context-a`) returned zero results, even though a memory had just been successfully added to that same context.
+
+### Final, Conclusive Analysis
+
+This confirms that despite the server-side changes, a fundamental bug persists in the API's context isolation for the `search_memories` and `list_memories` tools. While memories are likely being written correctly, they cannot be retrieved within their specified context, rendering the API unsuitable for multi-tenant or multi-agent applications.
+
+Our test script now serves as a permanent, reliable benchmark to validate the API. When `examples/search_context_test.py` passes, the bug is fixed.
+
+The investigation phase is now closed. 
